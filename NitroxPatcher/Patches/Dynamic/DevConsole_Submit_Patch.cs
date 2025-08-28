@@ -16,7 +16,7 @@ public sealed partial class DevConsole_Submit_Patch : NitroxPatch, IDynamicPatch
 
     public static bool Prefix(string value)
     {
-        Log.Info($"Used cheat command : '{value}'");
+        Log.Info($"Used cheat command: '{value}'");
         Resolve<IPacketSender>().Send(new CheatCommand(value));
 
         // Allow submit if player has sufficient permissions
