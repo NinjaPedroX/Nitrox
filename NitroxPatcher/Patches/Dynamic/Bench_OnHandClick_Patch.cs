@@ -24,6 +24,11 @@ public sealed partial class Bench_OnHandClick_Patch : NitroxPatch, IDynamicPatch
             return true;
         }
 
+        if (!__instance.enabled)
+        {
+            return false;
+        }
+
         if (Resolve<SimulationOwnership>().HasExclusiveLock(id))
         {
             Log.Debug($"Already have an exclusive lock on the bench/chair: {id}");
