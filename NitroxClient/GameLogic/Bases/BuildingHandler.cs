@@ -156,6 +156,10 @@ public partial class BuildingHandler : MonoBehaviour
                 yield return BuildingPostSpawner.ApplyPostSpawner(gameObject, modifyConstructedAmount.GhostId);
                 yield break;
             }
+            if (constructable.TryGetComponent(out Bench bench) && bench.currentPlayer)
+            {
+                bench.ExitSittingMode(bench.currentPlayer);
+            }
             constructable.SetState(false, false);
             constructable.constructedAmount = modifyConstructedAmount.ConstructedAmount;
             yield return constructable.ProgressDeconstruction();
