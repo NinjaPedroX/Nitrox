@@ -13,6 +13,8 @@ internal record NotificationAddMessage(NotificationItem Item);
 
 internal record NotificationCloseMessage(NotificationItem Item);
 
+internal record ExternalModsEnabledChangedMessage(bool Enabled);
+
 internal record ShowViewMessage
 {
     public required RoutableViewModelBase ViewModel { get; init; }

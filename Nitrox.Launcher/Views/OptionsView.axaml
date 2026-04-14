@@ -191,6 +191,20 @@
                                       ToolTip.Tip="Enable this option to use the Nitrox launcher in light mode" />
                         </StackPanel>
                     </Border>
+                    <Border>
+                        <StackPanel>
+                            <TextBlock Text="Enable external mod support (EXPERIMENTAL)" />
+                            <CheckBox Classes="switch"
+                                      IsChecked="{Binding ExternalModsEnabled}"
+                                      ToolTip.Tip="Enable this option to allow the use of external mods with Nitrox. NOTE: This feature is still under development">
+                                <Interaction.Behaviors>
+                                    <EventTriggerBehavior EventName="Click">
+                                        <InvokeCommandAction Command="{Binding DisplayExternalModsNotificationCommand}" />
+                                    </EventTriggerBehavior>
+                                </Interaction.Behaviors>
+                            </CheckBox>
+                        </StackPanel>
+                    </Border>
                     <Border IsVisible="{Binding SelectedGame.Platform, Converter={converters:EqualityConverter}, ConverterParameter={x:Static models:Platform.STEAM}}">
                         <StackPanel>
                             <TextBlock Text="Allow multiple game instances" />

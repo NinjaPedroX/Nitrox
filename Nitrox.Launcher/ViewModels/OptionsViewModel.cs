@@ -8,6 +8,8 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Nitrox.Launcher.Models;
 using Nitrox.Launcher.Models.Design;
 using Nitrox.Launcher.Models.Services;
 using Nitrox.Launcher.Models.Utils;
@@ -51,6 +53,9 @@ internal partial class OptionsViewModel(IKeyValueStore keyValueStore, StorageSer
     public partial bool LightModeEnabled { get; set; }
 
     [ObservableProperty]
+    public partial bool ExternalModsEnabled { get; set; }
+
+    [ObservableProperty]
     public partial bool AllowMultipleGameInstances { get; set; }
 
     [ObservableProperty]
@@ -71,6 +76,7 @@ internal partial class OptionsViewModel(IKeyValueStore keyValueStore, StorageSer
         SavesPath = keyValueStore.GetSavesFolderDir();
         LogsPath = Model.Logger.Log.LogDirectory;
         LightModeEnabled = keyValueStore.GetIsLightModeEnabled();
+        ExternalModsEnabled = keyValueStore.GetAreExternalModsEnabled();
         AllowMultipleGameInstances = keyValueStore.GetIsMultipleGameInstancesAllowed();
         UseBigPictureMode = keyValueStore.GetUseBigPictureMode();
         IsInReleaseMode = NitroxEnvironment.IsReleaseMode;
@@ -149,6 +155,15 @@ internal partial class OptionsViewModel(IKeyValueStore keyValueStore, StorageSer
     }
 
     [RelayCommand]
+    private void DisplayExternalModsNotification()
+    {
+        if (ExternalModsEnabled)
+        {
+            LauncherNotifier.Warning("Note: Enabling external mods may cause instability and is not recommended. Please direct all gameplay issues to the original mod authors and not to the Nitrox team.");
+        }
+    }
+
+    [RelayCommand]
     private void DisplaySteamOverlayNotification()
     {
         if (AllowMultipleGameInstances && SelectedGame.Platform == Platform.STEAM)
@@ -177,6 +192,12 @@ internal partial class OptionsViewModel(IKeyValueStore keyValueStore, StorageSer
     {
         keyValueStore.SetIsLightModeEnabled(value);
         Dispatcher.UIThread.Invoke(() => Application.Current!.RequestedThemeVariant = value ? ThemeVariant.Light : ThemeVariant.Dark);
+    }
+
+    partial void OnExternalModsEnabledChanged(bool value)
+    {
+        keyValueStore.SetAreExternalModsEnabled(value);
+        WeakReferenceMessenger.Default.Send(new ExternalModsEnabledChangedMessage(value));
     }
 
     partial void OnAllowMultipleGameInstancesChanged(bool value)

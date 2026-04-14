@@ -28,6 +28,7 @@ internal partial class MainWindowViewModel : ViewModelBase, IRoutingScreen
     private readonly CommunityViewModel communityViewModel;
     private readonly DialogService dialogService;
     private readonly LaunchGameViewModel launchGameViewModel;
+    private readonly ModsViewModel modsViewModel;
     private readonly Func<Window> mainWindowProvider;
     private readonly OptionsViewModel optionsViewModel;
     private readonly ServerService serverService;
@@ -40,6 +41,9 @@ internal partial class MainWindowViewModel : ViewModelBase, IRoutingScreen
     [ObservableProperty]
     public partial bool UpdateAvailableOrUnofficial { get; set; }
 
+    [ObservableProperty]
+    public partial bool AreExternalModsEnabled { get; set; }
+
     public AvaloniaList<NotificationItem> Notifications { get; init; } = [];
 
     public MainWindowViewModel(
@@ -47,6 +51,7 @@ internal partial class MainWindowViewModel : ViewModelBase, IRoutingScreen
         DialogService dialogService,
         ServersViewModel serversViewModel,
         LaunchGameViewModel launchGameViewModel,
+        ModsViewModel modsViewModel,
         CommunityViewModel communityViewModel,
         BlogViewModel blogViewModel,
         UpdatesViewModel updatesViewModel,
@@ -59,6 +64,7 @@ internal partial class MainWindowViewModel : ViewModelBase, IRoutingScreen
         this.dialogService = dialogService;
         this.launchGameViewModel = launchGameViewModel;
         this.serversViewModel = serversViewModel;
+        this.modsViewModel = modsViewModel;
         this.communityViewModel = communityViewModel;
         this.blogViewModel = blogViewModel;
         this.updatesViewModel = updatesViewModel;
@@ -83,11 +89,14 @@ internal partial class MainWindowViewModel : ViewModelBase, IRoutingScreen
             }
         });
 
+        this.RegisterMessageListener<ExternalModsEnabledChangedMessage, MainWindowViewModel>((message, vm) =>
+            Dispatcher.UIThread.Invoke(() => vm.AreExternalModsEnabled = message.Enabled));
         if (!IsDesignMode)
         {
             bool lightModeEnabled = keyValueStore.GetIsLightModeEnabled();
             Dispatcher.UIThread.Invoke(() => Application.Current!.RequestedThemeVariant = lightModeEnabled ? ThemeVariant.Light : ThemeVariant.Dark);
             GameInstallationFinder.FindGameCached(GameInfo.Subnautica);
+            AreExternalModsEnabled = keyValueStore.GetAreExternalModsEnabled();
 
             if (!NitroxEnvironment.IsReleaseMode)
             {
@@ -115,6 +124,9 @@ internal partial class MainWindowViewModel : ViewModelBase, IRoutingScreen
 
     [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task OpenServersViewAsync() => await this.ShowAsync(serversViewModel);
+
+    [RelayCommand(AllowConcurrentExecutions = false)]
+    public async Task OpenModsViewAsync() => await this.ShowAsync(modsViewModel);
 
     [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task OpenCommunityViewAsync() => await this.ShowAsync(communityViewModel);

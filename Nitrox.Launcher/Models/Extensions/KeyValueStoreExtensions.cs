@@ -10,6 +10,8 @@ public static class KeyValueStoreExtensions
         public void SetLaunchArguments(GameInfo gameInfo, string value) => self.SetValue($"{gameInfo.Name}LaunchArguments", value);
         public bool GetIsLightModeEnabled(bool defaultValue = false) => self.GetValue("IsLightModeEnabled", defaultValue);
         public void SetIsLightModeEnabled(bool value) => self.SetValue("IsLightModeEnabled", value);
+        public bool GetAreExternalModsEnabled(bool defaultValue = false) => self.GetValue("AreExternalModsEnabled", defaultValue);
+        public void SetAreExternalModsEnabled(bool value) => self.SetValue("AreExternalModsEnabled", value);
         public bool GetIsMultipleGameInstancesAllowed(bool defaultValue = false) => self.GetValue("IsMultipleGameInstancesAllowed", defaultValue);
         public void SetIsMultipleGameInstancesAllowed(bool value) => self.SetValue("IsMultipleGameInstancesAllowed", value);
         public bool GetPreferEmbedded(bool defaultValue = true) => self.GetValue("PreferEmbedded", defaultValue);
